@@ -50,13 +50,14 @@ def euclidean_distance(a1, a2, l1, l2):
     return adj_euc, lap_euc
 
 
-def frobenius_distance(a1, a2, l1, l2):
-    """
-    Compute Frobenius distance between adjacency and Laplacian matrices
-    """
-    adj_frob = np.linalg.norm(a1 - a2, 'fro') # Frobenius norm
-    lap_frob = np.linalg.norm(l1 - l2, 'fro')
-    return adj_frob, lap_frob
+# def frobenius_distance(a1, a2, l1, l2):
+#     """
+#     Compute Frobenius distance between adjacency and Laplacian matrices
+#     In our case, Frobenius and euclidean distance metric are the same
+#     """
+#     adj_frob = np.linalg.norm(a1 - a2, 'fro') # Frobenius norm
+#     lap_frob = np.linalg.norm(l1 - l2, 'fro')
+#     return adj_frob, lap_frob
 
 
 def spectral_distance(a1, a2, l1, l2):
@@ -73,6 +74,7 @@ def spectral_distance(a1, a2, l1, l2):
     lap_e2 = np.linalg.eig(l2)[0]
     lap_e2 = lap_e2[np.argsort(lap_e2)]
 
+    # use assert
     if len(adj_e1) == len(adj_e2) and len(lap_e1) == len(lap_e2):
         adj_spec = np.sum(np.abs(adj_e1 - adj_e2))
         lap_spec = np.sum(np.abs(lap_e1 - lap_e2))
@@ -83,27 +85,34 @@ def plot_grid(values, measurement):
     n_lower = 0; n_upper = 2
     num = np.unique(np.logspace(n_lower, n_upper, num = n_upper+1, base=10, dtype = int))
     prob = np.arange(0.1, 1, 0.1)
-    N = 200
 
     display_rows = [n for n in num if n != 1]
 
     fig, axes = plt.subplots(len(display_rows), len(prob), figsize=(20, 6), sharex=True, sharey=True)
-    fig.suptitle(f"{measurement} Distributions for Erdos-Reyni Random Graphs", fontsize=26)
+    fig.suptitle(f"{measurement} Distributions for Erdos-Reyni Random Graphs", x=0.5, y=1.05, fontsize=20)
 
+
+    
     for i, n in enumerate(display_rows):
         for j, p in enumerate(prob):
             axis = axes[i,j]
 
             min_xval = min(values[(n,p)])
             max_xval = max(values[(n,p)])
-            axis.set_xlim(min_xval,max_xval)
-            # axis.set_ylim(0, (N/2))
+            # axis.set_xlim(min_xval,max_xval)
 
             axis.hist(values[(n,p)])
             axis.set_title(f"n={n}, p={p:.1f}")
 
-    fig.text(0.5, 0.04, measurement, ha='center', va='center', fontsize=20)
-    fig.text(0.04, 0.5, 'Frequency', ha='center', va='center', rotation='vertical', fontsize=20)
+        min_xval = min(values[(n,p)])
+        max_xval = max(values[(n,p)])
+        # axis.set_xlim(min_xval,max_xval)
+
+    # axes[0].set_xlim()
+    # axes[1].set_xlim(min_xval, max_xval)
+    
+    fig.text(0.5, -0.05, measurement, ha='center', va='center', fontsize=15)
+    fig.text(0.05, 0.5, 'Frequency', ha='center', va='center', rotation='vertical', fontsize=15)
 
     plt.tight_layout()
     plt.subplots_adjust(top=0.9, left=0.1, right=0.9)
@@ -176,21 +185,28 @@ def main():
             adj_spec_grid[(n,p)] = adj_spec_vals
             lap_spec_grid[(n,p)] = lap_spec_vals
 
-    print("Plotting distance distributions...")
-    print("")
-    print("Type 'adjacency/laplacian euclidean', 'frobenius', or 'spectral' to plot corresponding distance distribution. Otherwise, type 'break'.")
-    print("")
-    command = input()
-    responses = {"adjacency euclidean": plot_grid(adj_euc_grid, "Adjacency Euclidean Distance"),
-                "adjacency frobenius": plot_grid(adj_frob_grid, "Adjacency Frobenius Distance"),
-                "adjacency spectral": plot_grid(adj_spec_grid, "Adjacency Spectral Distance"),
-                "laplacian euclidean": plot_grid(lap_euc_grid, "Laplacian Euclidean Distance"),
-                "laplacian frobenius": plot_grid(lap_frob_grid, "Laplacian Frobenius Distance"),
-                "laplacian spectral": plot_grid(lap_spec_grid, "Laplacian Spectral Distance")}
+    # print("Plotting distance distributions...")
+    # print("")
+    # print("Type 'adjacency/laplacian euclidean', 'frobenius', or 'spectral' to plot corresponding distance distribution. Otherwise, type 'break'.")
+    # print("")
+    # command = input()
+    # responses = {"adjacency euclidean": plot_grid(adj_euc_grid, "Adjacency Euclidean Distance"),
+    #             "adjacency frobenius": plot_grid(adj_frob_grid, "Adjacency Frobenius Distance"),
+    #             "adjacency spectral": plot_grid(adj_spec_grid, "Adjacency Spectral Distance"),
+    #             "laplacian euclidean": plot_grid(lap_euc_grid, "Laplacian Euclidean Distance"),
+    #             "laplacian frobenius": plot_grid(lap_frob_grid, "Laplacian Frobenius Distance"),
+    #             "laplacian spectral": plot_grid(lap_spec_grid, "Laplacian Spectral Distance")}
     
-    while command != "break":
-        print(responses[command])
-        command = input("Continue?")
+    # while command != "break":
+    #     print(responses[command])
+    #     command = input("Continue?")
+
+    # plot_grid(adj_euc_grid, "Adjacency Euclidean Distance")
+    # plot_grid(adj_frob_grid, "Adjacency Frobenius Distance")
+    plot_grid(adj_spec_grid, "Adjacency Spectral Distance")
+    # plot_grid(lap_euc_grid, "Laplacian Euclidean Distance")
+    # plot_grid(lap_frob_grid, "Laplacian Frobenius Distance")
+    plot_grid(lap_spec_grid, "Laplacian Spectral Distance")
 
 
 if __name__ == "__main__":
